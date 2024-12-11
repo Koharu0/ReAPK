@@ -1,4 +1,4 @@
-#### [한국어 버전은 여기에 있어요!](https://github.com/Koharu0/ReAPK/new/develop?filename=README.md#reapk---the-ultimate-gui-toolkit-for-apk-1)
+#### [한국어 버전은 여기에 있어요!](https://github.com/Koharu0/ReAPK?tab=readme-ov-file#reapk---the-ultimate-gui-toolkit-for-apk-1)
 # ReAPK - The Ultimate GUI Toolkit for APK
 ReAPK is a powerful **GUI-based tool** designed to simplify APK operations such as **decompiling**, **compiling**, and **signing** APK files.
 
