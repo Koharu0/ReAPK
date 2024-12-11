@@ -8,7 +8,7 @@ This branch **does not provide release files**, so you will need to build the ap
 The `develop` branch always contains the **latest experimental code** of the project.
 
 > **Note:** **This branch includes unstable experimental code and is subject to frequent changes.**
-
+ 
 ## 🚀 How to Use
 Before using ReAPK, you need to install the **required dependencies** by running `dependencies.bat`.<br>
 Due to licensing issues, several dependencies are not included in the project.<br>
@@ -30,7 +30,7 @@ ReAPK is continuously improving! Future updates will include:
 - Enhanced **configuration saving/loading** features
 - Advanced **APK analysis tools**
 - Many other exciting updates 🚀
-
+---
 # ReAPK - The Ultimate GUI Toolkit for APK
 ReAPK는 APK 파일의 **디컴파일**, **컴파일**, **서명** 등의 작업을 손쉽게 수행할 수 있는 강력한 GUI 기반의 도구입니다.
 
