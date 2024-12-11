@@ -2,17 +2,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace ReAPK
@@ -29,29 +19,40 @@ namespace ReAPK
 
         private void _Loaded_(object sender, RoutedEventArgs e)
         {
-            LoadSettings();
+            LoadSettings(); //설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정
+            CreateFolder(); //디컴파일, 컴파일, 사인 폴더 생성
+            CheckToolsExist(); //도구가 기본값에 존재하는지 확인, 텍스트박스 설정
+        }
+        public void CreateFolder() //시작시 디컴파일, 컴파일, 사인 폴더 생성
+        {
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            
+            string decompileFolderPath = Path.Combine(exeDirectory, "!Decompiled APKs");
+            string compileFolderPath = Path.Combine(exeDirectory, "!Compiled APKs");
+            string signFolderPath = Path.Combine(exeDirectory, "!Signed APKs");
 
-
-
-            // 생성할 폴더 이름
-            string folderName = "!Decompiled APKs";
-
-            // 최종 폴더 경로
-            string folderPath = Path.Combine(exeDirectory, folderName);
-
-            // 폴더 생성
-            if (!Directory.Exists(folderPath)) // 폴더가 존재하지 않을 경우에만 생성
+            // 존재하지 않으면 폴더 생성
+            if (!Directory.Exists(decompileFolderPath)) // 디컴파일 폴더
             {
-                Directory.CreateDirectory(folderPath);
+                Directory.CreateDirectory(decompileFolderPath);
             }
+            if (!Directory.Exists(compileFolderPath)) //컴파일 폴더
+            {
+                Directory.CreateDirectory(compileFolderPath);
+            }
+            if (!Directory.Exists(signFolderPath)) //서명 폴더
+            {
+                Directory.CreateDirectory(signFolderPath);
+            }
+        }
+        public void CheckToolsExist() //시작시 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
+        {
+            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
             string Cert = Path.Combine(exeDirectory, "Resources", "testkey.x509.pem");
             string Key = Path.Combine(exeDirectory, "Resources", "testkey.pk8");
             if (!File.Exists(Apktool))
             {
-                MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.");
+                MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
             }
             if (File.Exists(Apktool))
             {
@@ -59,22 +60,21 @@ namespace ReAPK
             }
             if (!File.Exists(Cert))
             {
-                MessageBox.Show("Error: Cert가 존재하지 않습니다 => 경로 변경 필요");
+                MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
             }
-            if (File.Exists (Cert))
+            if (File.Exists(Cert))
             {
                 tboxCert.Text = Cert;
             }
             if (!File.Exists(Key))
             {
-                MessageBox.Show("Error: Key가 존재하지 않습니다 => 경로 변경 필요");
-            }            
+                MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+            }
             if (File.Exists(Key))
             {
                 tboxKey.Text = Key;
             }
         }
-
         public class Settings
         {
             public string Language { get; set; }
@@ -83,41 +83,9 @@ namespace ReAPK
             public string Cert { get; set; }
             public string Key { get; set; }
         }
-
-        private void LoadSettings()
+        public void SetUILanguage(string Language) // 요소의 언어 설정
         {
-            try
-            {
-                var test = Properties.Settings.Default.Language;
-            }
-            catch (ConfigurationErrorsException ex)
-            {
-                //MessageBox.Show("설정 파일에 오류가 발생했습니다."); //최초 실행 고려
-                try
-                {
-                    Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReAPK"), true);
-                    MessageBox.Show("지움");
-                    return;
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show("오류가 발생했습니다.");
-                    MessageBox.Show(exception.Message);
-                }
-
-
-                //기본 설정 파일로 복구
-                //Properties.Settings.Default.Language = "EN";
-                //MessageBox.Show("로깅 12");
-                //Properties.Settings.Default.AutoSign = false;
-                //MessageBox.Show("로깅 1");
-                //UpdateSettings();
-                
-                Properties.Settings.Default.Save();
-                
-            }
-            MessageBox.Show($"로드세팅 호출됨, {Properties.Settings.Default.Language}");
-            if (Properties.Settings.Default.Language == "EN")
+            if (Language == "EN")
             {
                 appSettings.Language = "EN";
                 LanguageSelector.SelectedIndex = 0;
@@ -128,7 +96,7 @@ namespace ReAPK
                 tabMain.Header = "Main";
                 tabSettings.Header = "Settings";
             }
-            else if (Properties.Settings.Default.Language == "KO")
+            if (Language == "KO")
             {
                 appSettings.Language = "KO";
                 LanguageSelector.SelectedIndex = 1;
@@ -141,10 +109,48 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("Language 로드 실패 - 영어로 설정");
+                MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램이 정상적으로 작동하지 않을 수 있습니다.");
+            }
+        }
+        private void LoadSettings() //설정 파일 검사, 복구, 요소 언어 설정 호출
+        {
+            try
+            {
+                var test = Properties.Settings.Default.Language;
+            }
+            catch (ConfigurationErrorsException ex) //설정 파일이 손상된 경우
+            {
+                try //설정 파일 제거 시도
+                {
+                    Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReAPK"), true);
+                    MessageBox.Show("오류가 발생했으나 복구에 성공했습니다.\n변경 사항을 적용하기 위해 프로그램을 다시 실행해 주세요.");
+                    Environment.Exit(0);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("설정 파일 초기화 중 오류가 발생했습니다.\nWin+R -> %localappdata% 입력 후 ReAPK 폴더를 삭제해 주세요.\nReAPK 폴더가 없는 경우, 프로그램을 재설치해 주세요.");
+                    MessageBox.Show("오류 메시지는 다음과 같습니다: " + exception.Message);
+                    Environment.Exit(0);
+                }                
+            }
+            if (Properties.Settings.Default.Language == "EN") //설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
+            {
+                SetUILanguage(Properties.Settings.Default.Language);
+            }
+            else if (Properties.Settings.Default.Language == "KO") //설정 파일이 정상적임 + 최초 실행 X
+            {
+                SetUILanguage(Properties.Settings.Default.Language);
+            }
+            else if (Properties.Settings.Default.Language == "FirstRun") //최초 실행임
+            {
                 appSettings.Language = "EN";
                 Properties.Settings.Default.Language = "EN";
                 LoadSettings();
+            }
+            else
+            {
+                MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.");
+                Environment.Exit(0);
             }
         }
 
@@ -218,15 +224,14 @@ namespace ReAPK
             try
             {
                 // Process 실행
-                process.Start();
                 labState.Content = $"{fileName}.apk를 디컴파일 중...";
+                process.Start();
                 string error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
                 process.WaitForExit(); // 명령어가 끝날 때까지 대기
 
-                // 결과 메시지 출력
                 if (process.ExitCode == 0)
                 {
-                    MessageBox.Show($"디컴파일 완료!");
+                    MessageBox.Show("디컴파일 완료!");
                     labState.Content = $"{fileName}.apk의 디컴파일이 완료되었습니다.";
                 }
                 else
@@ -324,7 +329,7 @@ namespace ReAPK
         private void Compile(string folderPath, string outputApkPath, string Apktool, string folderName)
         {
             string command = $"-jar \"{Apktool}\" b \"{folderPath}\" -o \"{outputApkPath}\"";
-
+            
             Process process = new Process();
             process.StartInfo.FileName = "java";
             process.StartInfo.Arguments = command;
@@ -332,15 +337,18 @@ namespace ReAPK
             process.StartInfo.RedirectStandardError = true; // 에러 캡처
             process.StartInfo.UseShellExecute = false; // 셸 사용 비활성화
             process.StartInfo.CreateNoWindow = true; // 별도 창 표시 없음
-            labState.Content = $"{folderName}컴파일중.";
-            process.Start();
-            string error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
-            process.WaitForExit(); // 명령어가 끝날 때까지 대기
+            
+            
             try
             {
-                // APK 컴파일 실행
+                labState.Content = $"{folderName} 컴파일 중...";
+                process.Start();
+                string error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
+                process.WaitForExit(); // 명령어가 끝날 때까지 대기
+
                 if (process.ExitCode == 0)
                 {
+                    MessageBox.Show("컴파일 완료!");
                     labState.Content = $"{folderName}의 컴파일이 완료되었습니다.";
                     if (chkAutoSign.IsChecked == true)
                     {

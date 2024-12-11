@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Language" Type="System.String" Scope="User">
-      <Value Profile="(Default)">EN</Value>
+      <Value Profile="(Default)">FirstRun</Value>
     </Setting>
     <Setting Name="AutoSign" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)" />

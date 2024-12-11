@@ -25,7 +25,7 @@ namespace ReAPK.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("EN")]
+        [global::System.Configuration.DefaultSettingValueAttribute("FirstRun")]
         public string Language {
             get {
                 return ((string)(this["Language"]));

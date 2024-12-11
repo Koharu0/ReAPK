@@ -17,7 +17,7 @@
                     <Button x:Name="btnDecompile" Content="Decompile APK" HorizontalAlignment="Left" Margin="44,46,0,0" VerticalAlignment="Top" AllowDrop="True" Drop="btnDecompile_Drop" DragEnter="btnDeCompile_DragEnter" Height="51" Width="98" Grid.ColumnSpan="2"/>
                     <Button x:Name="btnCompile" Content="Compile APK" HorizontalAlignment="Left" Margin="67,46,0,0" VerticalAlignment="Top" AllowDrop="True" Drop="btnCompile_Drop" DragEnter="btnCompile_DragEnter" Height="51" Width="93" Grid.Column="1"/>
                     <Button x:Name="btnSign" Content="Sign APK" HorizontalAlignment="Left" Margin="171,46,0,0" VerticalAlignment="Top" AllowDrop="True" Drop="btnSign_Drop" DragEnter="btnSign_DragEnter" Height="51" Width="92" Grid.Column="1"/>
-                    <Label x:Name="labState" Content="" HorizontalAlignment="Left" Margin="66,139,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="labState" Content="" HorizontalAlignment="Left" Margin="44,139,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="304"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabSettings" Header="Settings">
