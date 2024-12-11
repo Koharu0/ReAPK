@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using Path = System.IO.Path;
 
 namespace ReAPK
@@ -20,29 +21,7 @@ namespace ReAPK
         private void _Loaded_(object sender, RoutedEventArgs e)
         {
             LoadSettings(); //설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정
-            CreateFolder(); //디컴파일, 컴파일, 사인 폴더 생성
             CheckToolsExist(); //도구가 기본값에 존재하는지 확인, 텍스트박스 설정
-        }
-        public void CreateFolder() //시작시 디컴파일, 컴파일, 사인 폴더 생성
-        {
-            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string decompileFolderPath = Path.Combine(exeDirectory, "!Decompiled APKs");
-            string compileFolderPath = Path.Combine(exeDirectory, "!Compiled APKs");
-            string signFolderPath = Path.Combine(exeDirectory, "!Signed APKs");
-
-            // 존재하지 않으면 폴더 생성
-            if (!Directory.Exists(decompileFolderPath)) // 디컴파일 폴더
-            {
-                Directory.CreateDirectory(decompileFolderPath);
-            }
-            if (!Directory.Exists(compileFolderPath)) //컴파일 폴더
-            {
-                Directory.CreateDirectory(compileFolderPath);
-            }
-            if (!Directory.Exists(signFolderPath)) //서명 폴더
-            {
-                Directory.CreateDirectory(signFolderPath);
-            }
         }
         public void CheckToolsExist() //시작시 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
         {
@@ -75,7 +54,7 @@ namespace ReAPK
                 tboxKey.Text = Key;
             }
         }
-        public class Settings
+        public class Settings 
         {
             public string Language { get; set; }
             public bool AutoSign { get; set; }
@@ -96,7 +75,7 @@ namespace ReAPK
                 tabMain.Header = "Main";
                 tabSettings.Header = "Settings";
             }
-            if (Language == "KO")
+            else if (Language == "KO")
             {
                 appSettings.Language = "KO";
                 LanguageSelector.SelectedIndex = 1;
@@ -152,6 +131,15 @@ namespace ReAPK
                 MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.");
                 Environment.Exit(0);
             }
+            chkAutoSign.IsChecked = Properties.Settings.Default.AutoSign; //UI 반영
+            tboxApktool.Text = Properties.Settings.Default.Apktool; //UI 반영
+            tboxCert.Text = Properties.Settings.Default.Cert; //UI 반영
+            tboxKey.Text = Properties.Settings.Default.Key; //UI 반영
+
+            appSettings.AutoSign = Properties.Settings.Default.AutoSign; //앱 설정
+            appSettings.Apktool = Properties.Settings.Default.Apktool; //앱 설정
+            appSettings.Cert = Properties.Settings.Default.Cert; //앱 설정
+            appSettings.Key = Properties.Settings.Default.Key; //앱 설정
         }
 
         private Settings appSettings = new Settings();
@@ -163,8 +151,6 @@ namespace ReAPK
             Properties.Settings.Default.Cert = appSettings.Cert;
             Properties.Settings.Default.Key = appSettings.Key;
             Properties.Settings.Default.Save();
-            //string Language = Properties.Settings.Default.Language;
-            //MessageBox.Show("언어가 다음으로 설정됨: " + Language);
         }
 
         private void btnDeCompile_DragEnter(object sender, DragEventArgs e)
@@ -205,61 +191,56 @@ namespace ReAPK
             }
         }
 
-        private void Decompile(string apk, string fileName)
+        public async Task<(string output, string error, int ExitCode)> Run(string fileName, string command)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = fileName;
+            process.StartInfo.Arguments = command;
+            process.StartInfo.RedirectStandardOutput = true; // 표준 출력 캡처
+            process.StartInfo.RedirectStandardError = true; // 표준 오류 캡처
+            process.StartInfo.UseShellExecute = false; // 셸 사용 비활성화
+            process.StartInfo.CreateNoWindow = true; // 별도 창 표시 안 함
+
+            process.Start();
+            string output = await process.StandardOutput.ReadToEndAsync(); // 표준 출력 읽기
+            string error = await process.StandardError.ReadToEndAsync(); // 표준 오류 읽기
+            await process.WaitForExitAsync();
+            int ExitCode = process.ExitCode;
+            return (output, error, ExitCode);
+        }
+        private async void Decompile(string apk, string fileName)
         {
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
-            string folderName = "!Decompiled APKs";
-            string folderPath = Path.Combine(exeDirectory, folderName, fileName);
+            string folderPath = Path.Combine(exeDirectory, "!Decompiled APKs", fileName);
             string command = $"-jar \"{Apktool}\" d -o \"{folderPath}\" \"{apk}\"";
-
-            Process process = new Process();
-            process.StartInfo.FileName = "java";
-            process.StartInfo.Arguments = command;
-            process.StartInfo.RedirectStandardOutput = true; // 명령어 출력을 캡처
-            process.StartInfo.RedirectStandardError = true; // 에러 캡처
-            process.StartInfo.UseShellExecute = false; // 셸 사용 비활성화
-            process.StartInfo.CreateNoWindow = true; // 별도 창 표시 없음
-
             try
             {
-                // Process 실행
-                labState.Content = $"{fileName}.apk를 디컴파일 중...";
-                process.Start();
-                string error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
-                process.WaitForExit(); // 명령어가 끝날 때까지 대기
-
-                if (process.ExitCode == 0)
+                labState.Content = $"{fileName}.apk를 디컴파일 중..."; // 작동 안 함. 수정 필요.
+                var result = await Run("java", command);
+                if (result.ExitCode == 0)
                 {
-                    MessageBox.Show("디컴파일 완료!");
                     labState.Content = $"{fileName}.apk의 디컴파일이 완료되었습니다.";
                 }
                 else
                 {
-                    if (error.Contains("already exists."))
+                    if (result.error.Contains("already exists."))
                     {
-                        MessageBoxResult result = MessageBox.Show(
-            "이미 디컴파일한 폴더가 존재합니다. 덮어쓸까요?",
-            "폴더 덮어쓰기",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning
-        );
-                        if (result == MessageBoxResult.Yes)
+                        MessageBoxResult msgboxresult = MessageBox.Show("이미 디컴파일한 폴더가 존재합니다. 덮어쓸까요?", "폴더 덮어쓰기", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                        if (msgboxresult == MessageBoxResult.Yes)
                         {
                             command = $"-jar \"{Apktool}\" d -f -o \"{folderPath}\" \"{apk}\"";
-                            process.StartInfo.Arguments = command;
                             try
                             {
-                                process.Start();
-                                error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
-                                process.WaitForExit(); // 명령어가 끝날 때까지 대기
-                                if (process.ExitCode == 0)
+                                result = await Run("java", command);
+                                if (result.ExitCode == 0)
                                 {
                                     labState.Content = $"{fileName}.apk의 디컴파일이 완료되었습니다.";
                                 }
                                 else
                                 {
-                                    MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{error}");
+                                    MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{result.error}");
                                 }
                             }
                             catch (Exception ex)
@@ -267,14 +248,14 @@ namespace ReAPK
                                 MessageBox.Show($"예외 발생: {ex.Message}");
                             }
                         }
-                        else if (result == MessageBoxResult.No)
+                        else if (msgboxresult == MessageBoxResult.No)
                         {
                             labState.Content = $"{fileName}.apk의 디컴파일이 취소되었습니다.";
                         }
                     }
                     else
                     {
-                        MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{error}");
+                        MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{result.error}");
                     }
                 }
             }
@@ -326,29 +307,17 @@ namespace ReAPK
             }
         }
 
-        private void Compile(string folderPath, string outputApkPath, string Apktool, string folderName)
+        private async void Compile(string folderPath, string outputApkPath, string Apktool, string folderName)
         {
             string command = $"-jar \"{Apktool}\" b \"{folderPath}\" -o \"{outputApkPath}\"";
-            
-            Process process = new Process();
-            process.StartInfo.FileName = "java";
-            process.StartInfo.Arguments = command;
-            process.StartInfo.RedirectStandardOutput = true; // 명령어 출력을 캡처
-            process.StartInfo.RedirectStandardError = true; // 에러 캡처
-            process.StartInfo.UseShellExecute = false; // 셸 사용 비활성화
-            process.StartInfo.CreateNoWindow = true; // 별도 창 표시 없음
-            
-            
+
             try
             {
                 labState.Content = $"{folderName} 컴파일 중...";
-                process.Start();
-                string error = process.StandardError.ReadToEnd();   // 실행 중 발생한 에러 출력
-                process.WaitForExit(); // 명령어가 끝날 때까지 대기
+                var result = await Run("java", command);
 
-                if (process.ExitCode == 0)
+                if (result.ExitCode == 0)
                 {
-                    MessageBox.Show("컴파일 완료!");
                     labState.Content = $"{folderName}의 컴파일이 완료되었습니다.";
                     if (chkAutoSign.IsChecked == true)
                     {
@@ -358,7 +327,7 @@ namespace ReAPK
                 }
                 else
                 {
-                    MessageBox.Show($"컴파일 중 문제가 발생했습니다:\n{error}");
+                    MessageBox.Show($"컴파일 중 문제가 발생했습니다:\n{result.error}");
                 }
             }
             catch (Exception ex)
@@ -400,56 +369,41 @@ namespace ReAPK
                 Directory.CreateDirectory(folderPath);
                 if (extension == ".apk")
                 {
-                    MessageBox.Show(droppedFile);
                     Sign(droppedFile, fileName, fromCompile);
                 }
             }
         }
 
-        private void Sign(string apk, string fileName, bool fromCompile)
+        private async void Sign(string apk, string fileName, bool fromCompile)
         {
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string signedPath;
             if (fromCompile == true)
             {
-                signedPath = Path.Combine(exeDirectory, "!Compiled APKs", fileName + "_compiled.apk"); //결과물 APK
+                signedPath = Path.Combine(exeDirectory, "!Compiled APKs", fileName + "_compiled.apk"); // 결과물 APK
             }
             else
             {
-                signedPath = Path.Combine(exeDirectory, "!Signed APKs", fileName + ".apk"); //결과물 APK
+                signedPath = Path.Combine(exeDirectory, "!Signed APKs", fileName + ".apk"); // 결과물 APK
             }
             string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "apksigner.bat");
-            //string signedPath = Path.Combine(exeDirectory, "!Signed APKs", fileName + ".apk"); //결과물 APK
-            string keyPath = Path.Combine(exeDirectory, "Resources", "testkey.pk8");
-            string certPath = Path.Combine(exeDirectory, "Resources", "testkey.x509.pem");
+            string keyPath = appSettings.Key;
+            string certPath = appSettings.Cert;
 
             string command = $"sign --key \"{keyPath}\" --cert \"{certPath}\" --v4-signing-enabled false --out \"{signedPath}\" \"{apk}\"";
 
-            Process process = new Process();
-            process.StartInfo.FileName = apksigner; // .bat 경로를 지정
-            process.StartInfo.Arguments = command; // 명령어 인수 전달
-            process.StartInfo.UseShellExecute = false; // CLI 환경에서 실행
-            process.StartInfo.RedirectStandardOutput = true; // 표준 출력 캡처
-            process.StartInfo.RedirectStandardError = true; // 표준 에러 캡처
-            process.StartInfo.CreateNoWindow = true; // 창 표시 안 함
-
             try
             {
-                // 프로세스 실행
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd(); // 실행 결과 읽기
-                string error = process.StandardError.ReadToEnd(); // 실행 중 에러 읽기
-                process.WaitForExit(); // 종료 대기
+                labState.Content = $"{fileName}.apk 서명 중...";
+                var result = await Run(apksigner, command);
 
-                // 결과 확인
-                if (process.ExitCode == 0)
+                if (result.ExitCode == 0)
                 {
                     labState.Content = $"{fileName}.apk 서명이 완료되었습니다.";
                 }
                 else
                 {
-                    MessageBox.Show("서명 중 에러 발생:");
-                    MessageBox.Show(error);
+                    MessageBox.Show("서명 중 오류 발생: " + result.error);
                 }
             }
             catch (Exception ex)
@@ -462,25 +416,23 @@ namespace ReAPK
         {
             if (LanguageSelector.SelectedIndex == 0) // English
             {
-                btnDecompile.Content = "Decompile APK";
-                btnCompile.Content = "Compile APK";
-                btnSign.Content = "Sign APK";
-                chkAutoSign.Content = "Automatically Sign APK After Compile";
-                tabMain.Header = "Main";
-                tabSettings.Header = "Settings";
-
-                appSettings.Language = "EN";
+                SetUILanguage("EN");
             }
             else if (LanguageSelector.SelectedIndex == 1) // 한국어
             {
-                btnDecompile.Content = "APK 디컴파일";
-                btnCompile.Content = "APK 컴파일";
-                btnSign.Content = "APK 서명";
-                chkAutoSign.Content = "APK 컴파일 후 자동으로 서명";
-                tabMain.Header = "메인";
-                tabSettings.Header = "설정";
-
-                appSettings.Language = "KO";
+                SetUILanguage("KO");
+            }
+            if (chkAutoSign.IsChecked == true) // 체크박스 설정 안 건들고 설정 버튼 누를 경우를 대비
+            {
+                appSettings.AutoSign = true;
+            }
+            else if (chkAutoSign.IsChecked == false)
+            {
+                appSettings.AutoSign = false;
+            }
+            else
+            {
+                MessageBox.Show("알 수 없는 오류가 발생했습니다.\n이 버튼 아래 보이는 체크박스를 클릭해보고 다시 이 버튼을 눌러보면 해결될 것 같네요!");
             }
             appSettings.Apktool = tboxApktool.Text;
             appSettings.Cert = tboxCert.Text;
