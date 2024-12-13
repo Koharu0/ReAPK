@@ -44,9 +44,9 @@ ReAPK는 APK 파일의 **디컴파일**, **컴파일**, **서명** 등의 작업
 ReAPK를 사용하기 전에 **필수 의존성**을 설치해야 합니다.  먼저 `dependencies.bat`을 실행해주세요.<br>
 라이선스 관련 문제로 여러 의존성이 프로젝트에 포함되어 있지 않으며, `dependencies.bat` 실행 시 의존성을 자동으로 설치합니다.<br>
 #### 필요한 의존성 목록
-- Java (JDK 21 이상)
-- Apktool (최신 버전)
-- apksigner.bat (최신 버전): `apksigner.bat`은 Android SDK에 포함되어 있습니다.
+- **Java (JDK 21 이상)**
+- **Apktool (최신 버전)**
+- **apksigner.bat (최신 버전)**: `apksigner.bat`은 Android SDK에 포함되어 있습니다.
 
 ## ✨Current Features
 
