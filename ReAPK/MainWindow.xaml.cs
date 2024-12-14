@@ -75,6 +75,7 @@ namespace ReAPK
                 tabMain.Header = "Main";
                 tabSettings.Header = "Settings";
                 labWarning.Content = "Please press 'Set' after making changes to save your settings.";
+                labHowToUse.Content = "Simply drag and drop files onto the button to process them.";
             }
             else if (Language == "KO")
             {
@@ -87,6 +88,7 @@ namespace ReAPK
                 tabMain.Header = "메인";
                 tabSettings.Header = "설정";
                 labWarning.Content = "설정값을 저장하기 위해 설정값 변경 후 'Set' 버튼을 눌러주세요.";
+                labHowToUse.Content = "파일을 버튼으로 Drag & Drop해서 작업을 수행합니다.";
             }
             else
             {
