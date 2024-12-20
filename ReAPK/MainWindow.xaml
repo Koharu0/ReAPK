@@ -11,9 +11,9 @@
             <TabItem x:Name="tabMain" Header="Main">
                 <Grid>
                     <StackPanel Background="White" Orientation="Horizontal">
-                        <Button x:Name="btnDecompile" Content="Decompile APK" Margin="60 30 0 0" HorizontalAlignment="Left" VerticalAlignment="Top" AllowDrop="True" Drop="btnDecompile_Drop" DragEnter="btnDeCompile_DragEnter" Height="51" Width="136"/>
-                        <Button x:Name="btnCompile" Content="Compile APK" Margin="20 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Top" AllowDrop="True" Drop="btnCompile_Drop" DragEnter="btnCompile_DragEnter" Height="51" Width="136"/>
-                        <Button x:Name="btnSign" Content="Sign APK" Margin="20 30 0 0" HorizontalAlignment="Right" VerticalAlignment="Top" AllowDrop="True" Drop="btnSign_Drop" DragEnter="btnSign_DragEnter" Height="51" Width="136"/>
+                        <Button x:Name="btnDecompile" Content="Decompile APK" Margin="60 30 0 0" HorizontalAlignment="Left" VerticalAlignment="Top" AllowDrop="True" Drop="btnDecompile_Drop" DragEnter="btnDeCompile_DragEnter" Height="51" Width="136" Click="btnDecompile_Click"/>
+                        <Button x:Name="btnCompile" Content="Compile APK" Margin="20 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Top" AllowDrop="True" Drop="btnCompile_Drop" DragEnter="btnCompile_DragEnter" Height="51" Width="136" Click="btnCompile_Click"/>
+                        <Button x:Name="btnSign" Content="Sign APK" Margin="20 30 0 0" HorizontalAlignment="Right" VerticalAlignment="Top" AllowDrop="True" Drop="btnSign_Drop" DragEnter="btnSign_DragEnter" Height="51" Width="136" Click="btnSign_Click"/>
                     </StackPanel>
                     <Grid>
                         <Label x:Name="labState" Width="638" Height="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="55 180 0 0"/>

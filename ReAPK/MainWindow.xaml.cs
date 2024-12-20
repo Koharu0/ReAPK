@@ -361,7 +361,6 @@ namespace ReAPK
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                bool fromCompile = false;
                 string droppedFile = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
                 string fileName = Path.GetFileNameWithoutExtension(droppedFile);
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -373,7 +372,7 @@ namespace ReAPK
                 Directory.CreateDirectory(folderPath);
                 if (extension == ".apk")
                 {
-                    Sign(droppedFile, fileName, fromCompile);
+                    Sign(droppedFile, fileName, false);
                 }
             }
         }
@@ -495,6 +494,52 @@ namespace ReAPK
         private void chkAutoSign_Unchecked(object sender, RoutedEventArgs e)
         {
             appSettings.AutoSign = false;
+        }
+
+        private void btnDecompile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "APK|*.apk",
+                Title = "Select an APK to decompile."
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                Decompile(openFileDialog.FileName, fileName);
+            }
+        }
+
+        private void btnCompile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog
+            {
+                Title = "Select a folder to compile."
+            };
+
+            if (openFolderDialog.ShowDialog() == true)
+            {
+                string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string folderName = Path.GetFileNameWithoutExtension(openFolderDialog.FolderName);
+                string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
+                string outputApkPath = Path.Combine(exeDirectory, "!Compiled APKs", $"{folderName}_compiled.apk");
+                Compile(openFolderDialog.FolderName, outputApkPath, Apktool, folderName);
+            }
+        }
+
+        private void btnSign_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select an APK to sign.",
+                Filter = "APK|*.apk"
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                Sign(openFileDialog.FileName, fileName, false);
+            }
         }
     }
 }
