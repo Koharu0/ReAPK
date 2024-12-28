@@ -12,10 +12,11 @@ The `develop` branch always contains the **latest experimental code** of the pro
 ## 🚀 How to Use
 Before using ReAPK, you need to install the **required dependencies** by running `dependencies.bat`.<br>
 Due to licensing issues, several dependencies are not included in the project.<br>
-Running `dependencies.bat` will automatically install them for you.
+Running `dependencies.bat` will automatically install them for you, except for the .NET Desktop Runtime.
 
 #### Required Dependencies
-- **Java (JDK 21 or higher)**
+- **.NET Desktop Runtime (8.0 and higher)**
+- **Java (JDK 21 and higher)**
 - **Apktool (latest version)**
 - **apksigner.bat (latest version)**: `apksigner.bat` is included in the Android SDK.
 
@@ -42,8 +43,9 @@ ReAPK는 APK 파일의 **디컴파일**, **컴파일**, **서명** 등의 작업
 
 ## 🚀 How to Use
 ReAPK를 사용하기 전에 **필수 의존성**을 설치해야 합니다.  먼저 `dependencies.bat`을 실행해주세요.<br>
-라이선스 관련 문제로 여러 의존성이 프로젝트에 포함되어 있지 않으며, `dependencies.bat` 실행 시 의존성을 자동으로 설치합니다.<br>
+라이선스 관련 문제로 여러 의존성이 프로젝트에 포함되어 있지 않으며, `dependencies.bat` 실행 시 .NET Desktop Runtime을 제외한 모든 의존성을 자동으로 설치합니다.<br>
 #### 필요한 의존성 목록
+- **.NET Desktop Runtime (8.0 이상)
 - **Java (JDK 21 이상)**
 - **Apktool (최신 버전)**
 - **apksigner.bat (최신 버전)**: `apksigner.bat`은 Android SDK에 포함되어 있습니다.
