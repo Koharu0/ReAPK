@@ -20,17 +20,18 @@ namespace ReAPK
         
         private void _Loaded_(object sender, RoutedEventArgs e)
         {
+            CheckSettings();
             CheckToolsExist(); // 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
             LoadSettings(); // 설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정
             
         }
-        private void LoadSettings() //설정 파일 검사, 복구, 요소 언어 설정 호출
+        private void CheckSettings() // 실행함으로서 CheckToolsExist, LoadSettings => 설정 파일 검증 불필요하게 함.
         {
             try
             {
                 var test = Properties.Settings.Default.Language;
             }
-            catch (ConfigurationErrorsException ex) //설정 파일이 손상된 경우
+            catch (ConfigurationErrorsException) //설정 파일이 손상된 경우
             {
                 try //설정 파일 제거 시도
                 {
@@ -45,6 +46,10 @@ namespace ReAPK
                     Environment.Exit(0);
                 }
             }
+        }
+        private void LoadSettings() //설정 파일 검사, 복구, 요소 언어 설정 호출
+        {
+            
             if (Properties.Settings.Default.Language == "EN") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
             {
                 SetUILanguage(Properties.Settings.Default.Language);
@@ -67,11 +72,10 @@ namespace ReAPK
                 MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.");
                 Environment.Exit(0);
             }
-            //chkAutoSign.IsChecked = Properties.Settings.Default.AutoSign; // UI 반영
-            //tboxApktool.Text = Properties.Settings.Default.Apktool; // UI 반영
-            //tboxCert.Text = Properties.Settings.Default.Cert; // UI 반영
-            //tboxKey.Text = Properties.Settings.Default.Key; // UI 반영
-
+            chkAutoSign.IsChecked = Properties.Settings.Default.AutoSign; // UI 반영
+            tboxApktool.Text = Properties.Settings.Default.Apktool; // UI 반영
+            tboxCert.Text = Properties.Settings.Default.Cert; // UI 반영
+            tboxKey.Text = Properties.Settings.Default.Key; // UI 반영
             appSettings.AutoSign = Properties.Settings.Default.AutoSign; // 앱 설정
             appSettings.Apktool = Properties.Settings.Default.Apktool; // 앱 설정
             appSettings.Cert = Properties.Settings.Default.Cert; // 앱 설정
@@ -85,7 +89,10 @@ namespace ReAPK
             string Key = Path.Combine(exeDirectory, "Resources", "testkey.pk8");
             if (!File.Exists(Apktool))
             {
-                MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                if (!File.Exists(Properties.Settings.Default.Apktool))
+                {
+                    MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
             }
             if (File.Exists(Apktool))
             {
@@ -93,7 +100,10 @@ namespace ReAPK
             }
             if (!File.Exists(Cert))
             {
-                MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                if (!File.Exists(Properties.Settings.Default.Cert))
+                {
+                    MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
             }
             if (File.Exists(Cert))
             {
@@ -101,7 +111,10 @@ namespace ReAPK
             }
             if (!File.Exists(Key))
             {
-                MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                if (!File.Exists(Properties.Settings.Default.Key))
+                {
+                    MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
             }
             if (File.Exists(Key))
             {
