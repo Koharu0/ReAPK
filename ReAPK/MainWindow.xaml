@@ -15,6 +15,11 @@
                         <Button x:Name="btnCompile" Content="Compile APK" Margin="20 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Top" AllowDrop="True" Drop="btnCompile_Drop" DragEnter="btnCompile_DragEnter" Height="51" Width="136" Click="btnCompile_Click"/>
                         <Button x:Name="btnSign" Content="Sign APK" Margin="20 30 0 0" HorizontalAlignment="Right" VerticalAlignment="Top" AllowDrop="True" Drop="btnSign_Drop" DragEnter="btnSign_DragEnter" Height="51" Width="136" Click="btnSign_Click"/>
                     </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <Button x:Name="btnOpenDecompiledFolder" Content="Open Decompiled APK Directory" Margin="520,30,10,0" Width="238" Click="btnOpenDecompiledFolder_Click"/>
+                        <Button x:Name="btnOpenCompiledFolder" Content="Open Compiled APK Directory" Margin="520,8,10,0" Width="238" Click="btnOpenCompiledFolder_Click"/>
+                        <Button x:Name="btnOpenSignedFolder" Content="Open Signed APK Directory" Margin="520,7,10,0" Width="238" Click="btnOpenSignedFolder_Click"/>
+                    </StackPanel>
                     <Grid>
                         <Label x:Name="labState" Width="638" Height="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="55 180 0 0"/>
                         <Label x:Name="labHowToUse" Content="파일을 버튼으로 Drag &amp; Drop해서 작업을 수행합니다." Margin="55 90 0 0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -52,6 +57,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-
     </Grid>
 </Window>

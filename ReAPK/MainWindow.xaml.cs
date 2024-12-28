@@ -397,7 +397,7 @@ namespace ReAPK
             string certPath = appSettings.Cert;
 
             string command = $"sign --key \"{keyPath}\" --cert \"{certPath}\" --v4-signing-enabled false --out \"{signedPath}\" \"{apk}\"";
-
+            Trace.WriteLine(certPath);
             try
             {
                 labState.Content = $"{fileName}.apk 서명 중...";
@@ -524,7 +524,7 @@ namespace ReAPK
             if (openFileDialog.ShowDialog() == true)
             {
                 string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                return (openFileDialog.FileName.ToString(), fileName);
+                return (openFileDialog.FileName, fileName);
             }
             return (null, null);
         }
@@ -545,11 +545,54 @@ namespace ReAPK
         }
         private void btnSign_Click(object sender, RoutedEventArgs e)
         {
+            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string folderName = "!Signed APKs";
+            string folderPath = Path.Combine(exeDirectory, folderName);
+            Directory.CreateDirectory(folderPath);
             (string fullapk, string fileName) = OpenFileDialog("Select an APK to sign.", "APK|*.apk");
             if (fullapk != null)
             {
                 Sign(fullapk, fileName, false);
             }
-        }  
+        }
+
+        private void btnOpenDecompiledFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Decompiled APKs");
+            if (Directory.Exists(folderPath))
+            {
+                Process.Start("explorer", folderPath);
+            }
+            else
+            {
+                MessageBox.Show("디컴파일한 APK가 없습니다.");
+            }
+        }
+
+        private void btnOpenCompiledFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Compiled APKs");
+            if (Directory.Exists(folderPath))
+            {
+                Process.Start("explorer", folderPath);
+            }
+            else
+            {
+                MessageBox.Show("컴파일된 APK가 없습니다.");
+            }
+        }
+
+        private void btnOpenSignedFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Signed APKs");
+            if (Directory.Exists(folderPath))
+            {
+                Process.Start("explorer", folderPath);
+            }
+            else
+            {
+                MessageBox.Show("서명된 APK가 없습니다.");
+            }
+        }
     }
 }
