@@ -515,7 +515,10 @@ namespace ReAPK
         private void btnDecompile_Click(object sender, RoutedEventArgs e)
         {
             (string fullapk, string fileName) = OpenFileDialog("Select an APK to decompile.", "APK|*.apk");
-            Decompile(fullapk, fileName);
+            if (fullapk != null)
+            {
+                Decompile(fullapk, fileName);
+            }
         }
 
         private void btnCompile_Click(object sender, RoutedEventArgs e)
