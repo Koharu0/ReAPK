@@ -18,7 +18,7 @@ Running `dependencies.bat` will automatically install them for you, except for t
 - **[.NET Desktop Runtime](https://download.visualstudio.microsoft.com/download/pr/27bcdd70-ce64-4049-ba24-2b14f9267729/d4a435e55182ce5424a7204c2cf2b3ea/windowsdesktop-runtime-8.0.11-win-x64.exe) (8.0 and higher)**
 - **Apktool (latest version)**
 - **Java (JDK 21 and higher)**
-- **apksigner.bat (latest version)**: `apksigner.bat` is included in the Android SDK.
+- **apksigner (Android SDK Build Tools 35.0.0)**: `apksigner.jar` located in `android_sdk/build-tools/35.0.0/lib` is required.
 
 ## ✨ Current Features
 
@@ -49,7 +49,7 @@ ReAPK를 사용하기 위해서는 몇 가지 **의존성**이 필요합니다. 
 - **[.NET Desktop Runtime](https://download.visualstudio.microsoft.com/download/pr/27bcdd70-ce64-4049-ba24-2b14f9267729/d4a435e55182ce5424a7204c2cf2b3ea/windowsdesktop-runtime-8.0.11-win-x64.exe) (8.0 이상)**
 - **Apktool (최신 버전)**
 - **Java (JDK 21 이상)**
-- **apksigner.bat (최신 버전)**: `apksigner.bat`은 Android SDK에 포함되어 있습니다.
+- **apksigner (Android SDK Build Tools 35.0.0)**: `android_sdk/build-tools/35.0.0/lib`에 위치한 `apksigner.jar`이 필요합니다.
 
 ## ✨ Current Features
 

@@ -45,14 +45,21 @@
                         </Button.Style>
                     </Button>
                     <Label x:Name="labApktool" Content="Apktool" HorizontalAlignment="Left" Margin="10,137,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="tboxApktool" HorizontalAlignment="Left" Margin="62,137,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
-                    <Button x:Name="btnApktool" Content=" ⋯ " HorizontalAlignment="Left" Margin="452,133,0,0" VerticalAlignment="Top" Click="btnApktool_Click"/>
-                    <Label x:Name="labCert" Content="Cert" HorizontalAlignment="Left" Margin="20,172,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="tboxCert" HorizontalAlignment="Left" Margin="62,174,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
-                    <TextBox x:Name="tboxKey" HorizontalAlignment="Left" Margin="62,211,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
-                    <Button x:Name="btnCertPath" Content=" ⋯ " HorizontalAlignment="Left" Margin="452,168,0,0" VerticalAlignment="Top" Click="btnCert_Click"/>
-                    <Label x:Name="labKey" Content="Key" HorizontalAlignment="Left" Margin="23,208,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnKey" Content=" ⋯ " HorizontalAlignment="Left" Margin="452,204,0,0" VerticalAlignment="Top" Click="btnKey_Click"/>
+                    <TextBox x:Name="tboxApktool" HorizontalAlignment="Left" Margin="72,136,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
+                    <Button x:Name="btnApktool" Content=" ⋯ " HorizontalAlignment="Left" Margin="461,133,0,0" VerticalAlignment="Top" Click="btnApktool_Click"/>
+                    
+                    <Label x:Name="labApksigner" Content="apksigner" HorizontalAlignment="Left" Margin="7,172,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tboxApksigner" HorizontalAlignment="Left" Margin="72,173,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
+                    <Button x:Name="btnApksigner" Content=" ⋯ " HorizontalAlignment="Left" Margin="461,168,0,0" VerticalAlignment="Top" Click="btnApksigner_Click"/>
+
+                    <Label x:Name="labCert" Content="Cert" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tboxCert" HorizontalAlignment="Left" Margin="72,209,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
+                    <Button x:Name="btnCertPath" Content=" ⋯ " HorizontalAlignment="Left" Margin="461,204,0,0" VerticalAlignment="Top" Click="btnCert_Click"/>
+
+                    <Label x:Name="labKey" Content="Key" HorizontalAlignment="Left" Margin="21,241,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tboxKey" HorizontalAlignment="Left" Margin="72,245,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="384" IsReadOnly="True"/>
+                    <Button x:Name="btnKey" Content=" ⋯ " HorizontalAlignment="Left" Margin="461,241,0,0" VerticalAlignment="Top" Click="btnKey_Click"/>
+
                     <Label x:Name="labWarning" Content="설정값을 저장하기 위해 설정값 변경 후 'Set' 버튼을 눌러주세요." HorizontalAlignment="Left" Margin="203,44,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>

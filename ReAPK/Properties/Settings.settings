@@ -11,6 +11,9 @@
     <Setting Name="Apktool" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="apksigner" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="Cert" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

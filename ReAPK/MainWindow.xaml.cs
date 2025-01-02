@@ -20,20 +20,20 @@ namespace ReAPK
         
         private void _Loaded_(object sender, RoutedEventArgs e)
         {
-            CheckSettings();
+            CheckSettings(); // 설정 파일 검증
             CheckToolsExist(); // 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
-            LoadSettings(); // 설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정
+            //LoadSettings(); // 설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정 <- CheckToolsExist()에서 호출함. [호출 순서 참고용]
             
         }
-        private void CheckSettings() // 실행함으로서 CheckToolsExist, LoadSettings => 설정 파일 검증 불필요하게 함.
+        private void CheckSettings() // 설정 파일 검증
         {
             try
             {
                 var test = Properties.Settings.Default.Language;
             }
-            catch (ConfigurationErrorsException) //설정 파일이 손상된 경우
+            catch (ConfigurationErrorsException) // 설정 파일이 손상된 경우
             {
-                try //설정 파일 제거 시도
+                try // 설정 파일 제거 시도
                 {
                     Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReAPK"), true);
                     MessageBox.Show("오류가 발생했으나 복구에 성공했습니다.\n변경 사항을 적용하기 위해 프로그램을 다시 실행해 주세요.");
@@ -47,9 +47,108 @@ namespace ReAPK
                 }
             }
         }
-        private void LoadSettings() //설정 파일 검사, 복구, 요소 언어 설정 호출
+        
+        public void CheckToolsExist() // 시작시 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
         {
-            
+            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
+            string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "lib", "apksigner.jar");
+            string Cert = Path.Combine(exeDirectory, "Resources", "testkey.x509.pem");
+            string Key = Path.Combine(exeDirectory, "Resources", "testkey.pk8");
+
+            bool IsdefaultApktool = false;
+            bool Isdefaultapksigner = false;
+            bool IsdefaultCert = false;
+            bool IsdefaultKey = false;
+            if (!File.Exists(Apktool)) // Apktool 기본값 아님
+            {
+                if (!File.Exists(Properties.Settings.Default.Apktool)) // 설정값도 아님
+                {
+                    appSettings.Apktool = null;
+                    Properties.Settings.Default.Apktool = null;
+                    MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+
+                }
+                else // 설정값임
+                {
+                    appSettings.Apktool = Properties.Settings.Default.Apktool;
+                }
+            }
+            if (File.Exists(Apktool)) // Apktool 기본값임
+            {
+                IsdefaultApktool = true;
+                appSettings.Apktool = Apktool;
+                tboxApktool.Text = Apktool;
+            }
+
+            if (!File.Exists(apksigner)) // apksigner 기본값 아님
+            {
+                if (!File.Exists(Properties.Settings.Default.apksigner)) // 설정값도 아님
+                {
+                    appSettings.apksigner = null;
+                    Properties.Settings.Default.apksigner = null;
+                    MessageBox.Show("Error: apksigner.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
+                else // 설정값임
+                {
+                    appSettings.apksigner = Properties.Settings.Default.apksigner;
+                }
+            }
+            if (File.Exists(apksigner)) // apksigner 기본값임
+            {
+                Isdefaultapksigner=true;
+                appSettings.apksigner=apksigner;
+                tboxApksigner.Text = apksigner;
+            }
+
+            if (!File.Exists(Cert)) // Cert 기본값 아님
+            {
+                if (!File.Exists(Properties.Settings.Default.Cert)) // 설정값도 아님
+                {
+                    appSettings.Cert = null;
+                    Properties.Settings.Default.Cert = null;
+                    MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
+                else // 설정값임
+                {
+                    appSettings.Cert = Properties.Settings.Default.Cert;
+                }
+            }
+            if (File.Exists(Cert)) // Cert 기본값임
+            {
+                IsdefaultCert = true;
+                appSettings.Cert = Cert;
+                tboxCert.Text = Cert;
+            }
+
+            if (!File.Exists(Key)) // Key 기본값 아님
+            {
+                if (!File.Exists(Properties.Settings.Default.Key)) // 설정값도 아님
+                {
+                    appSettings.Key = null;
+                    Properties.Settings.Default.Key = null;
+                    MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                }
+                else // 설정값임
+                {
+                    appSettings.Key = Properties.Settings.Default.Key;
+                }
+            }
+            if (File.Exists(Key)) // Key 기본값임
+            {
+                IsdefaultKey = true;
+                appSettings.Key = Key;
+                tboxKey.Text = Key;
+            }
+            Trace.WriteLine(IsdefaultApktool);
+            Trace.WriteLine(Isdefaultapksigner);
+            Trace.WriteLine(IsdefaultCert);
+            Trace.WriteLine(IsdefaultKey);
+            LoadSettings(IsdefaultApktool, Isdefaultapksigner, IsdefaultCert, IsdefaultKey);
+        }
+        private void LoadSettings(bool IsdefaultApktool, bool Isdefaultapksigner, bool IsdefaultCert, bool IsdefaultKey) // 설정 파일 검사, 복구, 요소 언어 설정 호출
+        {
+
             if (Properties.Settings.Default.Language == "EN") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
             {
                 SetUILanguage(Properties.Settings.Default.Language);
@@ -62,10 +161,10 @@ namespace ReAPK
             {
                 appSettings.Language = "EN";
                 Properties.Settings.Default.Language = "EN";
-                
-                //null 방지 기본 설정
+
+                // null 방지용 기본값 설정
                 Properties.Settings.Default.AutoSign = true;
-                LoadSettings();
+                LoadSettings(IsdefaultApktool, Isdefaultapksigner, IsdefaultCert, IsdefaultKey);
             }
             else
             {
@@ -73,65 +172,44 @@ namespace ReAPK
                 Environment.Exit(0);
             }
             chkAutoSign.IsChecked = Properties.Settings.Default.AutoSign; // UI 반영
-            tboxApktool.Text = Properties.Settings.Default.Apktool; // UI 반영
-            tboxCert.Text = Properties.Settings.Default.Cert; // UI 반영
-            tboxKey.Text = Properties.Settings.Default.Key; // UI 반영
+
+            if (IsdefaultApktool == false) //기본값 X
+            {
+                tboxApktool.Text = Properties.Settings.Default.Apktool; // UI 반영
+            }
+            
+            if (Isdefaultapksigner == false) //기본값 X
+            {
+                tboxApksigner.Text = Properties.Settings.Default.apksigner; // UI 반영
+            }
+
+            if (IsdefaultCert == false) //기본값 X
+            {
+                tboxCert.Text = Properties.Settings.Default.Cert; // UI 반영
+            }
+            
+            if (IsdefaultKey == false) //기본값 X
+            {
+                tboxKey.Text = Properties.Settings.Default.Key; // UI 반영
+            }
+            
             appSettings.AutoSign = Properties.Settings.Default.AutoSign; // 앱 설정
-            appSettings.Apktool = Properties.Settings.Default.Apktool; // 앱 설정
-            appSettings.Cert = Properties.Settings.Default.Cert; // 앱 설정
-            appSettings.Key = Properties.Settings.Default.Key; // 앱 설정
+            //appSettings.Apktool = Properties.Settings.Default.Apktool; // 앱 설정
+            //appSettings.apksigner = Properties.Settings.Default.apksigner; // 앱 설정
+            //appSettings.Cert = Properties.Settings.Default.Cert; // 앱 설정
+            //appSettings.Key = Properties.Settings.Default.Key; // 앱 설정
+            MessageBox.Show(appSettings.Apktool);
+            MessageBox.Show(appSettings.apksigner);
+            MessageBox.Show(appSettings.Cert);
+            MessageBox.Show(appSettings.Key);
         }
-        public void CheckToolsExist() // 시작시 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
-        {
-            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
-            string Cert = Path.Combine(exeDirectory, "Resources", "testkey.x509.pem");
-            string Key = Path.Combine(exeDirectory, "Resources", "testkey.pk8");
-            if (!File.Exists(Apktool))
-            {
-                if (!File.Exists(Properties.Settings.Default.Apktool))
-                {
-                    appSettings.Apktool = null;
-                    Properties.Settings.Default.Apktool = null;
-                    MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
-                }
-            }
-            if (File.Exists(Apktool))
-            {
-                tboxApktool.Text = Apktool;
-            }
-            if (!File.Exists(Cert))
-            {
-                if (!File.Exists(Properties.Settings.Default.Cert))
-                {
-                    appSettings.Cert = null;
-                    Properties.Settings.Default.Cert = null;
-                    MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
-                }
-            }
-            if (File.Exists(Cert))
-            {
-                tboxCert.Text = Cert;
-            }
-            if (!File.Exists(Key))
-            {
-                if (!File.Exists(Properties.Settings.Default.Key))
-                {
-                    appSettings.Key = null;
-                    Properties.Settings.Default.Key = null;
-                    MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
-                }
-            }
-            if (File.Exists(Key))
-            {
-                tboxKey.Text = Key;
-            }
-        }
+
         public class Settings 
         {
             public string Language { get; set; }
             public bool AutoSign { get; set; }
             public string Apktool { get; set; }
+            public string apksigner {  get; set; }
             public string Cert { get; set; }
             public string Key { get; set; }
         }
@@ -176,6 +254,7 @@ namespace ReAPK
             Properties.Settings.Default.Language = appSettings.Language;
             Properties.Settings.Default.AutoSign = appSettings.AutoSign;
             Properties.Settings.Default.Apktool = appSettings.Apktool;
+            Properties.Settings.Default.apksigner = appSettings.apksigner;
             Properties.Settings.Default.Cert = appSettings.Cert;
             Properties.Settings.Default.Key = appSettings.Key;
             Properties.Settings.Default.Save();
@@ -249,7 +328,7 @@ namespace ReAPK
             string command = $"-jar \"{Apktool}\" d -o \"{folderPath}\" \"{apk}\"";
             try
             {
-                labState.Content = $"{fileName}.apk를 디컴파일 중..."; // 작동 안 함. 수정 필요.
+                labState.Content = $"{fileName}.apk를 디컴파일 중...";
                 var result = await Run("java", command);
                 if (result.ExitCode == 0)
                 {
@@ -421,16 +500,16 @@ namespace ReAPK
             {
                 signedPath = Path.Combine(exeDirectory, "!Signed APKs", fileName + ".apk"); // 결과물 APK
             }
-            string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "apksigner.bat"); // To Do: apksigner 경로 커스텀 기능 구현
+            string apksigner = appSettings.apksigner;
             string keyPath = appSettings.Key;
             string certPath = appSettings.Cert;
 
-            string command = $"sign --key \"{keyPath}\" --cert \"{certPath}\" --v4-signing-enabled false --out \"{signedPath}\" \"{apk}\"";
+            string command = $"-jar \"{apksigner}\" sign --key \"{keyPath}\" --cert \"{certPath}\" --v4-signing-enabled false --out \"{signedPath}\" \"{apk}\"";
             Trace.WriteLine(certPath);
             try
             {
                 labState.Content = $"{fileName}.apk 서명 중...";
-                var result = await Run(apksigner, command);
+                var result = await Run("java", command);
 
                 if (result.ExitCode == 0)
                 {
@@ -487,6 +566,19 @@ namespace ReAPK
             if (openFileDialog.ShowDialog() == true)
             {
                 tboxApktool.Text = openFileDialog.FileName;
+            }
+        }
+        private void btnApksigner_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "apksigner|apksigner.jar",
+                Title = "Please select the apksigner.jar)"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                tboxApksigner.Text = openFileDialog.FileName;
             }
         }
 
