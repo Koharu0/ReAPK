@@ -91,6 +91,8 @@ namespace ReAPK
             {
                 if (!File.Exists(Properties.Settings.Default.Apktool))
                 {
+                    appSettings.Apktool = null;
+                    Properties.Settings.Default.Apktool = null;
                     MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
                 }
             }
@@ -102,6 +104,8 @@ namespace ReAPK
             {
                 if (!File.Exists(Properties.Settings.Default.Cert))
                 {
+                    appSettings.Cert = null;
+                    Properties.Settings.Default.Cert = null;
                     MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
                 }
             }
@@ -113,6 +117,8 @@ namespace ReAPK
             {
                 if (!File.Exists(Properties.Settings.Default.Key))
                 {
+                    appSettings.Key = null;
+                    Properties.Settings.Default.Key = null;
                     MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
                 }
             }
@@ -233,7 +239,12 @@ namespace ReAPK
         private async void Decompile(string apk, string fileName)
         {
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
+            string Apktool = appSettings.Apktool;
+            if (Apktool == null)
+            {
+                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.");
+                return;
+            }
             string folderPath = Path.Combine(exeDirectory, "!Decompiled APKs", fileName);
             string command = $"-jar \"{Apktool}\" d -o \"{folderPath}\" \"{apk}\"";
             try
@@ -330,6 +341,11 @@ namespace ReAPK
         {
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string outputApkPath = Path.Combine(exeDirectory, "!Compiled APKs", $"{folderName}_compiled.apk");
+            if (appSettings.Apktool == null)
+            {
+                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정해 주세요.");
+                return;
+            }
             string command = $"-jar \"{appSettings.Apktool}\" b \"{folderPath}\" -o \"{outputApkPath}\"";
             try
             {
@@ -405,7 +421,7 @@ namespace ReAPK
             {
                 signedPath = Path.Combine(exeDirectory, "!Signed APKs", fileName + ".apk"); // 결과물 APK
             }
-            string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "apksigner.bat");
+            string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "apksigner.bat"); // To Do: apksigner 경로 커스텀 기능 구현
             string keyPath = appSettings.Key;
             string certPath = appSettings.Cert;
 
