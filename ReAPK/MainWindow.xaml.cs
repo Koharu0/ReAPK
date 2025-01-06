@@ -36,6 +36,7 @@ namespace ReAPK
         }
         private void CheckSettings() // 설정 파일 검증
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             try
             {
                 var test = Properties.Settings.Default.Language;
@@ -45,13 +46,16 @@ namespace ReAPK
                 try // 설정 파일 제거 시도
                 {
                     Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReAPK"), true);
-                    MessageBox.Show("오류가 발생했으나 복구에 성공했습니다.\n변경 사항을 적용하기 위해 프로그램을 다시 실행해 주세요.");
+                    MessageBox.Show(rm.GetString("ErrorButRecovered", CultureInfo.CurrentCulture));
+                    // 오류가 발생했으나 복구에 성공했습니다.\n변경 사항을 적용하기 위해 프로그램을 다시 실행해 주세요.
                     Environment.Exit(0); // System.Reflection.TargetInvocationException: 'Exception has been thrown by the target of an invocation.' 발생함
                 }
                 catch (Exception exception)
                 {
-                    MessageBox.Show("설정 파일 초기화 중 오류가 발생했습니다.\nWin+R -> %localappdata% 입력 후 ReAPK 폴더를 삭제해 주세요.\nReAPK 폴더가 없는 경우, 프로그램을 재설치해 주세요.");
-                    MessageBox.Show("오류 메시지는 다음과 같습니다: " + exception.Message);
+                    MessageBox.Show(rm.GetString("ResetFailed", CultureInfo.CurrentCulture));
+                    // 설정 파일 초기화 중 오류가 발생했습니다.\nWin+R -> %localappdata% 입력 후 ReAPK 폴더를 삭제해 주세요.\nReAPK 폴더가 없는 경우, 프로그램을 재설치해 주세요.
+                    MessageBox.Show(rm.GetString("FollowError", CultureInfo.CurrentCulture) + exception.Message);
+                    // 오류 메시지는 다음과 같습니다: 
                     Environment.Exit(0);
                 }
             }
@@ -59,6 +63,8 @@ namespace ReAPK
         
         public void CheckToolsExist() // 시작시 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
+
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string Apktool = Path.Combine(exeDirectory, "Apktool", "apktool.jar");
             string apksigner = Path.Combine(exeDirectory, "Resources", "Android", "Sdk", "build-tools", "35.0.0", "lib", "apksigner.jar");
@@ -75,8 +81,8 @@ namespace ReAPK
                 {
                     appSettings.Apktool = null;
                     Properties.Settings.Default.Apktool = null;
-                    MessageBox.Show("Error: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
-
+                    MessageBox.Show(rm.GetString("ApktoolNotFound", CultureInfo.CurrentCulture));
+                    // 오류: apktool.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.
                 }
                 else // 설정값임
                 {
@@ -96,7 +102,8 @@ namespace ReAPK
                 {
                     appSettings.apksigner = null;
                     Properties.Settings.Default.apksigner = null;
-                    MessageBox.Show("Error: apksigner.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                    MessageBox.Show(rm.GetString("apksignerNotFound", CultureInfo.CurrentCulture));
+                    // 오류: apksigner.jar이 존재하지 않습니다.\n설정에서 경로를 변경해주세요.
                 }
                 else // 설정값임
                 {
@@ -116,7 +123,8 @@ namespace ReAPK
                 {
                     appSettings.Cert = null;
                     Properties.Settings.Default.Cert = null;
-                    MessageBox.Show("Error: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                    MessageBox.Show(rm.GetString("CertNotFound", CultureInfo.CurrentCulture));
+                    // 오류: Cert가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.
                 }
                 else // 설정값임
                 {
@@ -136,7 +144,8 @@ namespace ReAPK
                 {
                     appSettings.Key = null;
                     Properties.Settings.Default.Key = null;
-                    MessageBox.Show("Error: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.");
+                    MessageBox.Show(rm.GetString("KeyNotFound", CultureInfo.CurrentCulture));
+                    // 오류: Key가 존재하지 않습니다.\n설정에서 경로를 변경해주세요.
                 }
                 else // 설정값임
                 {
@@ -157,12 +166,16 @@ namespace ReAPK
         }
         private void CheckLanguage(bool IsdefaultApktool, bool Isdefaultapksigner, bool IsdefaultCert, bool IsdefaultKey)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (Properties.Settings.Default.Language == "en") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
             {
+                MessageBox.Show("R");
+                CultureInfo.CurrentCulture = new CultureInfo("en");
                 SetUILanguage(Properties.Settings.Default.Language);
             }
             else if (Properties.Settings.Default.Language == "ko") // 설정 파일이 정상적임 + 최초 실행 X
             {
+                CultureInfo.CurrentCulture = new CultureInfo("ko");
                 SetUILanguage(Properties.Settings.Default.Language);
             }
             else if (Properties.Settings.Default.Language == "FirstRun") // 최초 실행임
@@ -176,7 +189,8 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.");
+                MessageBox.Show(rm.GetString("UnknownError_RestartNeeded", CultureInfo.CurrentCulture));
+                // 알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.
                 Environment.Exit(0);
             }
         }
@@ -226,35 +240,47 @@ namespace ReAPK
         }
         public void SetUILanguage(string Language) // 요소의 언어 설정
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (Language == "en")
             {
                 appSettings.Language = "en";
                 LanguageSelector.SelectedIndex = 0;
-                btnDecompile.Content = "Decompile APK";
-                btnCompile.Content = "Compile APK";
-                btnSign.Content = "Sign APK";
-                chkAutoSign.Content = "Automatically Sign APK After Compile";
-                tabMain.Header = "Main";
-                tabSettings.Header = "Settings";
-                labWarning.Content = "Please press 'Set' after making changes to save your settings.";
-                labHowToUse.Content = "Simply drag and drop files onto the button to process them.";
+
+                CultureInfo.CurrentCulture = new CultureInfo("en");
+                btnDecompile.Content = rm.GetString("btnDecompile", CultureInfo.CurrentCulture);
+                btnCompile.Content = rm.GetString("btnCompile", CultureInfo.CurrentCulture);
+                btnSign.Content = rm.GetString("btnSign", CultureInfo.CurrentCulture);
+                chkAutoSign.Content = rm.GetString("chkAutoSign", CultureInfo.CurrentCulture);
+                tabMain.Header = rm.GetString("tabMain", CultureInfo.CurrentCulture);
+                tabSettings.Header = rm.GetString("tabSettings", CultureInfo.CurrentCulture);
+                labWarning.Content = rm.GetString("labWarning", CultureInfo.CurrentCulture);
+                labHowToUse.Content = rm.GetString("labHowToUse", CultureInfo.CurrentCulture);
+                btnOpenDecompiledFolder.Content = rm.GetString("btnOpenDecompiledFolder", CultureInfo.CurrentCulture);
+                btnOpenCompiledFolder.Content = rm.GetString("btnOpenCompiledFolder", CultureInfo.CurrentCulture);
+                btnOpenSignedFolder.Content = rm.GetString("btnOpenSignedFolder", CultureInfo.CurrentCulture);
             }
             else if (Language == "ko")
             {
                 appSettings.Language = "ko";
                 LanguageSelector.SelectedIndex = 1;
-                btnDecompile.Content = "APK 디컴파일";
-                btnCompile.Content = "APK 컴파일";
-                btnSign.Content = "APK 서명";
-                chkAutoSign.Content = "APK 컴파일 후 자동으로 서명";
-                tabMain.Header = "메인";
-                tabSettings.Header = "설정";
-                labWarning.Content = "설정값을 저장하기 위해 설정값 변경 후 'Set' 버튼을 눌러주세요.";
-                labHowToUse.Content = "파일을 버튼으로 Drag & Drop해서 작업을 수행합니다.";
+
+                CultureInfo.CurrentCulture = new CultureInfo("ko");
+                btnDecompile.Content = rm.GetString("btnDecompile", CultureInfo.CurrentCulture);
+                btnCompile.Content = rm.GetString("btnCompile", CultureInfo.CurrentCulture);
+                btnSign.Content = rm.GetString("btnSign", CultureInfo.CurrentCulture);
+                chkAutoSign.Content = rm.GetString("chkAutoSign", CultureInfo.CurrentCulture);
+                tabMain.Header = rm.GetString("tabMain", CultureInfo.CurrentCulture);
+                tabSettings.Header = rm.GetString("tabSettings", CultureInfo.CurrentCulture);
+                labWarning.Content = rm.GetString("labWarning", CultureInfo.CurrentCulture);
+                labHowToUse.Content = rm.GetString("labHowToUse", CultureInfo.CurrentCulture);
+                btnOpenDecompiledFolder.Content = rm.GetString("btnOpenDecompiledFolder", CultureInfo.CurrentCulture);
+                btnOpenCompiledFolder.Content = rm.GetString("btnOpenCompiledFolder", CultureInfo.CurrentCulture);
+                btnOpenSignedFolder.Content = rm.GetString("btnOpenSignedFolder", CultureInfo.CurrentCulture);
             }
             else
             {
-                MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램이 정상적으로 작동하지 않을 수 있습니다.");
+                MessageBox.Show(rm.GetString("UnknownError", CultureInfo.CurrentCulture));
+                // 알 수 없는 오류가 발생했습니다. 프로그램이 정상적으로 작동하지 않을 수 있습니다.
             }
         }
         
@@ -273,6 +299,7 @@ namespace ReAPK
 
         private void btnDeCompile_DragEnter(object sender, DragEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -283,7 +310,8 @@ namespace ReAPK
                 }
                 else
                 {
-                    MessageBox.Show("확장명이 .apk인 파일만 Drop이 가능합니다.");
+                    MessageBox.Show(rm.GetString("OnlyCanDropAPK", CultureInfo.CurrentCulture));
+                    // 확장명이 .apk인 파일만 끌어 놓을 수 있습니다.
                 }
             }
         }
@@ -539,12 +567,15 @@ namespace ReAPK
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
+            Trace.WriteLine("호출");
             if (LanguageSelector.SelectedIndex == 0) // English
             {
+                Trace.WriteLine("영어");
                 SetUILanguage("en");
             }
             else if (LanguageSelector.SelectedIndex == 1) // 한국어
             {
+                Trace.WriteLine("한국어");
                 SetUILanguage("ko");
             }
             if (chkAutoSign.IsChecked == true) // 체크박스 설정 안 건들고 설정 버튼 누를 경우를 대비
