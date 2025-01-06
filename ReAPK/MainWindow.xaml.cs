@@ -2,9 +2,11 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
-using System.Windows.Media;
+using System.Resources;
 using Path = System.IO.Path;
+using System.Globalization;
 
 namespace ReAPK
 {
@@ -20,9 +22,16 @@ namespace ReAPK
         
         private void _Loaded_(object sender, RoutedEventArgs e)
         {
+            //CultureInfo.CurrentCulture = new CultureInfo("en");
+            //ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
+            //string test = rm.GetString("btnDecompile", CultureInfo.CurrentCulture);
+            //Trace.WriteLine(CultureInfo.CurrentCulture);
+            //MessageBox.Show(test);
+
             CheckSettings(); // 설정 파일 검증
             CheckToolsExist(); // 도구가 기본값에 존재하는지 확인, 텍스트박스 설정
-            //LoadSettings(); // 설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정 <- CheckToolsExist()에서 호출함. [호출 순서 참고용]
+            //CheckLanguage(); // 요소 언어 설정
+            //LoadSettings(); // 설정 파일 유효성 확인 (이상하면 복구) + 요소 언어 설정 <- CheckLanguage()에서 호출함. [호출 순서 참고용]
             
         }
         private void CheckSettings() // 설정 파일 검증
@@ -144,23 +153,22 @@ namespace ReAPK
             Trace.WriteLine(Isdefaultapksigner);
             Trace.WriteLine(IsdefaultCert);
             Trace.WriteLine(IsdefaultKey);
-            LoadSettings(IsdefaultApktool, Isdefaultapksigner, IsdefaultCert, IsdefaultKey);
+            CheckLanguage(IsdefaultApktool, Isdefaultapksigner, IsdefaultCert, IsdefaultKey);
         }
-        private void LoadSettings(bool IsdefaultApktool, bool Isdefaultapksigner, bool IsdefaultCert, bool IsdefaultKey) // 설정 파일 검사, 복구, 요소 언어 설정 호출
+        private void CheckLanguage(bool IsdefaultApktool, bool Isdefaultapksigner, bool IsdefaultCert, bool IsdefaultKey)
         {
-
-            if (Properties.Settings.Default.Language == "EN") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
+            if (Properties.Settings.Default.Language == "en") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
             {
                 SetUILanguage(Properties.Settings.Default.Language);
             }
-            else if (Properties.Settings.Default.Language == "KO") // 설정 파일이 정상적임 + 최초 실행 X
+            else if (Properties.Settings.Default.Language == "ko") // 설정 파일이 정상적임 + 최초 실행 X
             {
                 SetUILanguage(Properties.Settings.Default.Language);
             }
             else if (Properties.Settings.Default.Language == "FirstRun") // 최초 실행임
             {
-                appSettings.Language = "EN";
-                Properties.Settings.Default.Language = "EN";
+                appSettings.Language = "en";
+                Properties.Settings.Default.Language = "en";
 
                 // null 방지용 기본값 설정
                 Properties.Settings.Default.AutoSign = true;
@@ -171,6 +179,9 @@ namespace ReAPK
                 MessageBox.Show("알 수 없는 오류가 발생했습니다. 프로그램을 다시 실행해 주세요.");
                 Environment.Exit(0);
             }
+        }
+        private void LoadSettings(bool IsdefaultApktool, bool Isdefaultapksigner, bool IsdefaultCert, bool IsdefaultKey) // 설정 파일 검사, 복구, 요소 언어 설정 호출
+        {
             chkAutoSign.IsChecked = Properties.Settings.Default.AutoSign; // UI 반영
 
             if (IsdefaultApktool == false) //기본값 X
@@ -215,9 +226,9 @@ namespace ReAPK
         }
         public void SetUILanguage(string Language) // 요소의 언어 설정
         {
-            if (Language == "EN")
+            if (Language == "en")
             {
-                appSettings.Language = "EN";
+                appSettings.Language = "en";
                 LanguageSelector.SelectedIndex = 0;
                 btnDecompile.Content = "Decompile APK";
                 btnCompile.Content = "Compile APK";
@@ -228,9 +239,9 @@ namespace ReAPK
                 labWarning.Content = "Please press 'Set' after making changes to save your settings.";
                 labHowToUse.Content = "Simply drag and drop files onto the button to process them.";
             }
-            else if (Language == "KO")
+            else if (Language == "ko")
             {
-                appSettings.Language = "KO";
+                appSettings.Language = "ko";
                 LanguageSelector.SelectedIndex = 1;
                 btnDecompile.Content = "APK 디컴파일";
                 btnCompile.Content = "APK 컴파일";
@@ -422,7 +433,7 @@ namespace ReAPK
             string outputApkPath = Path.Combine(exeDirectory, "!Compiled APKs", $"{folderName}_compiled.apk");
             if (appSettings.Apktool == null)
             {
-                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정해 주세요.");
+                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.");
                 return;
             }
             string command = $"-jar \"{appSettings.Apktool}\" b \"{folderPath}\" -o \"{outputApkPath}\"";
@@ -530,11 +541,11 @@ namespace ReAPK
         {
             if (LanguageSelector.SelectedIndex == 0) // English
             {
-                SetUILanguage("EN");
+                SetUILanguage("en");
             }
             else if (LanguageSelector.SelectedIndex == 1) // 한국어
             {
-                SetUILanguage("KO");
+                SetUILanguage("ko");
             }
             if (chkAutoSign.IsChecked == true) // 체크박스 설정 안 건들고 설정 버튼 누를 경우를 대비
             {
@@ -689,7 +700,7 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("디컴파일한 APK가 없습니다.");
+                MessageBox.Show("디컴파일된 APK가 없습니다.");
             }
         }
 
