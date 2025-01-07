@@ -169,7 +169,6 @@ namespace ReAPK
             ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (Properties.Settings.Default.Language == "en") // 설정 파일이 정상적임 + 최초 실행 X, 설정 파일 오류 발생 후 첫 실행일 가능성 있음
             {
-                MessageBox.Show("R");
                 CultureInfo.CurrentCulture = new CultureInfo("en");
                 SetUILanguage(Properties.Settings.Default.Language);
             }
@@ -356,28 +355,35 @@ namespace ReAPK
         }
         private async void Decompile(string apk, string fileName)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string Apktool = appSettings.Apktool;
             if (Apktool == null)
             {
-                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.");
+                MessageBox.Show(rm.GetString("ApktoolNotFound_Retry", CultureInfo.CurrentCulture));
+                // apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.
                 return;
             }
             string folderPath = Path.Combine(exeDirectory, "!Decompiled APKs", fileName);
             string command = $"-jar \"{Apktool}\" d -o \"{folderPath}\" \"{apk}\"";
             try
             {
-                labState.Content = $"{fileName}.apk를 디컴파일 중...";
+                string DecompilingFormat = rm.GetString("Decompiling", CultureInfo.CurrentCulture);
+                // {0}.apk를 디컴파일 중...
+                labState.Content = string.Format(DecompilingFormat, fileName);
                 var result = await Run("java", command);
                 if (result.ExitCode == 0)
                 {
-                    labState.Content = $"{fileName}.apk의 디컴파일이 완료되었습니다.";
+                    string DecompileCompileteFormat = rm.GetString("DecompileComplete", CultureInfo.CurrentCulture);
+                    // {0}.apk의 디컴파일이 완료되었습니다.
+                    labState.Content = string.Format(DecompileCompileteFormat, fileName);
                 }
                 else
                 {
                     if (result.error.Contains("already exists."))
                     {
-                        MessageBoxResult msgboxresult = MessageBox.Show("이미 디컴파일한 폴더가 존재합니다. 덮어쓸까요?", "폴더 덮어쓰기", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        MessageBoxResult msgboxresult = MessageBox.Show($"{rm.GetString("Question_Overwrite", CultureInfo.CurrentCulture)}", $"{rm.GetString("Overwrite", CultureInfo.CurrentCulture)}", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        // 이미 디컴파일한 폴더가 존재합니다. 덮어쓸까요? / 폴더 덮어쓰기
 
                         if (msgboxresult == MessageBoxResult.Yes)
                         {
@@ -387,32 +393,40 @@ namespace ReAPK
                                 result = await Run("java", command);
                                 if (result.ExitCode == 0)
                                 {
-                                    labState.Content = $"{fileName}.apk의 디컴파일이 완료되었습니다.";
+                                    string DecompilingFormat2 = rm.GetString("Decompiling", CultureInfo.CurrentCulture);
+                                    // {0}.apk를 디컴파일 중...
+                                    labState.Content = string.Format(DecompilingFormat2, fileName);
                                 }
                                 else
                                 {
-                                    MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{result.error}");
+                                    MessageBox.Show($"{rm.GetString("WhileDecompileError", CultureInfo.CurrentCulture)}\n{result.error}");
+                                    // 디컴파일 중 문제가 발생했습니다:
                                 }
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"예외 발생: {ex.Message}");
+                                MessageBox.Show($"{rm.GetString("Exception", CultureInfo.CurrentCulture)} {ex.Message}");
+                                // 예외 발생:
                             }
                         }
                         else if (msgboxresult == MessageBoxResult.No)
                         {
-                            labState.Content = $"{fileName}.apk의 디컴파일이 취소되었습니다.";
+                            string DecompileCanceled = rm.GetString("DecompileCanceled", CultureInfo.CurrentCulture);
+                            labState.Content = string.Format(DecompileCanceled, fileName);
+                            // {0}.apk의 디컴파일이 취소되었습니다.
                         }
                     }
                     else
                     {
-                        MessageBox.Show($"디컴파일 중 문제가 발생했습니다:\n{result.error}");
+                        MessageBox.Show($"{rm.GetString("WhileDecompileError", CultureInfo.CurrentCulture)}\n{result.error}");
+                        // 디컴파일 중 문제가 발생했습니다:
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"예외 발생: {ex.Message}");
+                MessageBox.Show($"{rm.GetString("Exception", CultureInfo.CurrentCulture)} {ex.Message}");
+                // 예외 발생:
             }
 
         }

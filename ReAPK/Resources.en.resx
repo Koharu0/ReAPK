@@ -118,10 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="apksignerNotFound" xml:space="preserve">
-    <value>Error: apksigner.jar does not exist.\nPlease change the path in the settings.</value>
+    <value>Error: apksigner.jar does not exist.Please change the path in the settings.</value>
   </data>
   <data name="ApktoolNotFound" xml:space="preserve">
-    <value>Error: apktool.jar does not exist.\nPlease change the path in the settings.</value>
+    <value>Error: apktool.jar does not exist.
+      Please change the path in the settings.</value>
+  </data>
+  <data name="ApktoolNotFound_Retry" xml:space="preserve">
+    <value>The path to apktool.jar is incorrect.
+      Please correct it in the settings and try again.</value>
   </data>
   <data name="btnCompile" xml:space="preserve">
     <value>Compile APK</value>
@@ -142,19 +147,34 @@
     <value>Sign APK</value>
   </data>
   <data name="CertNotFound" xml:space="preserve">
-    <value>Error: Cert does not exist.\nPlease change the path in the settings.</value>
+    <value>Error: Cert does not exist.
+      Please change the path in the settings.</value>
   </data>
   <data name="chkAutoSign" xml:space="preserve">
     <value>Automatically Sign APK After Compile</value>
   </data>
+  <data name="DecompileCanceled" xml:space="preserve">
+    <value>Decompiling of {0}.apk has been cancelled.</value>
+  </data>
+  <data name="DecompileComplete" xml:space="preserve">
+    <value>Decompiling of {0}.apk is complete.</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>Decompiling {0}.apk...</value>
+  </data>
   <data name="ErrorButRecovered" xml:space="preserve">
-    <value>An error occurred but was successfully recovered.\nPlease restart the program to apply changes.</value>
+    <value>An error occurred but was successfully recovered.
+      Please restart the program to apply changes.</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>Exception occurred:</value>
   </data>
   <data name="FollowError" xml:space="preserve">
     <value>The error message is as follows: </value>
   </data>
   <data name="KeyNotFound" xml:space="preserve">
-    <value>Error: Key does not exist.\nPlease change the path in the settings.</value>
+    <value>Error: Key does not exist.
+      Please change the path in the settings.</value>
   </data>
   <data name="labHowToUse" xml:space="preserve">
     <value>You can drag and drop a file onto the button to perform the task.</value>
@@ -165,8 +185,17 @@
   <data name="OnlyCanDropAPK" xml:space="preserve">
     <value>You can only drag and drop files with the .apk extension.</value>
   </data>
+  <data name="Overwrite" xml:space="preserve">
+    <value>Overwrite Folder</value>
+  </data>
+  <data name="Question_Overwrite" xml:space="preserve">
+    <value>A folder that has already been decompiled exists. Overwrite?
+</value>
+  </data>
   <data name="ResetFailed" xml:space="preserve">
-    <value>An error occurred while resetting the configuration file.\nPress Win+R -&gt; enter %localappdata%, then delete the ReAPK folder.\nIf the ReAPK folder does not exist, please reinstall the program.</value>
+    <value>An error occurred while resetting the configuration file.
+      Press Win+R -&gt; enter %localappdata%, then delete the ReAPK folder.
+      If the ReAPK folder does not exist, please reinstall the program.</value>
   </data>
   <data name="tabMain" xml:space="preserve">
     <value>Main</value>
@@ -179,5 +208,8 @@
   </data>
   <data name="UnknownError_RestartNeeded" xml:space="preserve">
     <value>An unknown error has occurred. Please restart the program.</value>
+  </data>
+  <data name="WhileDecompileError" xml:space="preserve">
+    <value>A problem occurred during decompilation:</value>
   </data>
 </root>
