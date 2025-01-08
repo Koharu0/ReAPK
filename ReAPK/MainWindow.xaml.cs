@@ -433,6 +433,7 @@ namespace ReAPK
         
         private void btnCompile_DragEnter(object sender, DragEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -444,7 +445,8 @@ namespace ReAPK
                 }
                 else
                 {
-                    MessageBox.Show("폴더만 Drop이 가능합니다.");
+                    MessageBox.Show(rm.GetString("CanOnlyFolder", CultureInfo.CurrentCulture));
+                    //폴더만 끌어 놓을 수 있습니다.
                 }
             }
         }
@@ -471,22 +473,28 @@ namespace ReAPK
 
         private async void Compile(string folderPath, string folderName)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string outputApkPath = Path.Combine(exeDirectory, "!Compiled APKs", $"{folderName}_compiled.apk");
             if (appSettings.Apktool == null)
             {
-                MessageBox.Show("apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.");
+                MessageBox.Show(rm.GetString("apksignerNotFound_Retry", CultureInfo.CurrentCulture));
+                // apktool.jar 경로가 잘못되었습니다.\n설정에서 수정한 뒤 다시 시도해 주세요.
                 return;
             }
             string command = $"-jar \"{appSettings.Apktool}\" b \"{folderPath}\" -o \"{outputApkPath}\"";
             try
             {
-                labState.Content = $"{folderName} 컴파일 중...";
+                string CompilingFormat = rm.GetString("Compiling", CultureInfo.CurrentCulture);
+                // {0} 컴파일 중...
+                labState.Content = string.Format(CompilingFormat, folderName);
                 var result = await Run("java", command);
 
                 if (result.ExitCode == 0)
                 {
-                    labState.Content = $"{folderName}의 컴파일이 완료되었습니다.";
+                    string CompileComplete = rm.GetString("CompileComplete", CultureInfo.CurrentCulture);
+                    // {0}의 컴파일이 완료되었습니다.
+                    labState.Content = string.Format(CompileComplete, folderName);
                     if (chkAutoSign.IsChecked == true)
                     {
                         bool fromCompile = true;
@@ -495,17 +503,20 @@ namespace ReAPK
                 }
                 else
                 {
-                    MessageBox.Show($"컴파일 중 문제가 발생했습니다:\n{result.error}");
+                    MessageBox.Show($"{rm.GetString("WhileCompileError", CultureInfo.CurrentCulture)}\n{result.error}");
+                    // 컴파일 중 문제가 발생했습니다:
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"예외 발생: {ex.Message}");
+                MessageBox.Show($"{rm.GetString("Exception", CultureInfo.CurrentCulture)} {ex.Message}");
+                // 예외 발생:
             }
         }
 
         private void btnSign_DragEnter(object sender, DragEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -516,7 +527,8 @@ namespace ReAPK
                 }
                 else
                 {
-                    MessageBox.Show("확장명이 .apk인 파일만 Drop이 가능합니다.");
+                    MessageBox.Show(rm.GetString("OnlyCanDropAPK", CultureInfo.CurrentCulture));
+                    // 확장명이 .apk인 파일만 끌어 놓을 수 있습니다.
                 }
             }
         }
@@ -543,6 +555,7 @@ namespace ReAPK
 
         public async void Sign(string apk, string fileName, bool fromCompile)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string signedPath;
             if (fromCompile == true)
@@ -561,27 +574,33 @@ namespace ReAPK
             Trace.WriteLine(certPath);
             try
             {
-                labState.Content = $"{fileName}.apk 서명 중...";
+                string SigningFormat = rm.GetString("Signing", CultureInfo.CurrentCulture);
+                // {0}.apk 서명 중...
+                labState.Content = string.Format(SigningFormat, fileName);
                 var result = await Run("java", command);
 
                 if (result.ExitCode == 0)
                 {
-                    labState.Content = $"{fileName}.apk 서명이 완료되었습니다.";
+                    string SignCompleteFormat = rm.GetString("SignComplete", CultureInfo.CurrentCulture);
+                    // {0}.apk 서명이 완료되었습니다.
+                    labState.Content = string.Format(SignCompleteFormat, fileName);
                 }
                 else
                 {
-                    MessageBox.Show("서명 중 오류 발생: " + result.error);
+                    MessageBox.Show(rm.GetString("WhileSignError", CultureInfo.CurrentCulture) + result.error);
+                    // 서명 중 오류 발생: 
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"예외 발생: {ex.Message}");
+                MessageBox.Show($"{rm.GetString("Exception", CultureInfo.CurrentCulture)} {ex.Message}");
+                // 예외 발생:
             }
         }
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
-            Trace.WriteLine("호출");
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             if (LanguageSelector.SelectedIndex == 0) // English
             {
                 Trace.WriteLine("영어");
@@ -602,7 +621,8 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("알 수 없는 오류가 발생했습니다.\n이 버튼 아래 보이는 체크박스를 클릭해보고 다시 이 버튼을 눌러보면 해결될 것 같네요!");
+                MessageBox.Show(rm.GetString("UnknownError_CheckBox", CultureInfo.CurrentCulture));
+                // 알 수 없는 오류가 발생했습니다.\n이 버튼 아래 보이는 체크박스를 클릭해보고 다시 이 버튼을 눌러보면 해결될 것 같네요!
             }
             appSettings.Apktool = tboxApktool.Text;
             appSettings.Cert = tboxCert.Text;
@@ -610,13 +630,16 @@ namespace ReAPK
             UpdateSettings();
 
         }
-
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         private void btnApktool_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Apktool|apktool.jar",
-                Title = "Please select the Apktool file. (Only apktool.jar is allowed.)"
+                Title = $"{rm.GetString("SelectApktool", CultureInfo.CurrentCulture)}"
+                //Apktool 파일을 선택해 주세요. (apktool.jar만 허용됩니다.)
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -626,10 +649,12 @@ namespace ReAPK
         }
         private void btnApksigner_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "apksigner|apksigner.jar",
-                Title = "Please select the apksigner.jar)"
+                Title = $"{rm.GetString("Selectapksigner", CultureInfo.CurrentCulture)}"
+                // apksigner.jar를 선택해 주세요.
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -640,10 +665,12 @@ namespace ReAPK
 
         private void btnCert_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Certificate|*.x509.pem",
-                Title = "Select X509 Certificate (.x509.pem) for APK Signing"
+                Title = $"{rm.GetString("SelectCert", CultureInfo.CurrentCulture)}"
+                // APK 서명에 사용할 인증서(.x509.pem)를 선택하세요.
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -654,10 +681,12 @@ namespace ReAPK
 
         private void btnKey_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Private Key|*.pk8",
-                Title = "Select Private Key File (.pk8) for APK Signing"
+                Title = $"{rm.GetString("SelectKey", CultureInfo.CurrentCulture)}"
+                // APK 서명에 사용할 비공개 키 파일(.pk8)을 선택하세요.
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -678,7 +707,9 @@ namespace ReAPK
 
         private void btnDecompile_Click(object sender, RoutedEventArgs e)
         {
-            (string fullapk, string fileName) = OpenFileDialog("Select an APK to decompile.", "APK|*.apk");
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
+            (string fullapk, string fileName) = OpenFileDialog(rm.GetString("SelectDecompile", CultureInfo.CurrentCulture), "APK|*.apk");
+            // 디컴파일할 APK를 선택하세요.
             if (fullapk != null)
             {
                 Decompile(fullapk, fileName);
@@ -687,7 +718,9 @@ namespace ReAPK
 
         private void btnCompile_Click(object sender, RoutedEventArgs e)
         {
-            (string fullfoldername, string foldername) = OpenFolderDialog("Select an APK to compile.");
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
+            (string fullfoldername, string foldername) = OpenFolderDialog(rm.GetString("SelectCompile", CultureInfo.CurrentCulture));
+            // 컴파일할 APK를 선택하세요.
             if (fullfoldername != null)
             {
                 Compile(fullfoldername, foldername);
@@ -725,11 +758,13 @@ namespace ReAPK
         }
         private void btnSign_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string folderName = "!Signed APKs";
             string folderPath = Path.Combine(exeDirectory, folderName);
             Directory.CreateDirectory(folderPath);
-            (string fullapk, string fileName) = OpenFileDialog("Select an APK to sign.", "APK|*.apk");
+            (string fullapk, string fileName) = OpenFileDialog(rm.GetString("SelectSign", CultureInfo.CurrentCulture), "APK|*.apk");
+            //서명할 APK를 선택하세요.
             if (fullapk != null)
             {
                 Sign(fullapk, fileName, false);
@@ -738,6 +773,7 @@ namespace ReAPK
 
         private void btnOpenDecompiledFolder_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Decompiled APKs");
             if (Directory.Exists(folderPath))
             {
@@ -745,12 +781,14 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("디컴파일된 APK가 없습니다.");
+                MessageBox.Show(rm.GetString("NoDecompiled", CultureInfo.CurrentCulture));
+                //디컴파일된 APK가 없습니다.
             }
         }
 
         private void btnOpenCompiledFolder_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Compiled APKs");
             if (Directory.Exists(folderPath))
             {
@@ -758,12 +796,14 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("컴파일된 APK가 없습니다.");
+                MessageBox.Show(rm.GetString("NoCompiled", CultureInfo.CurrentCulture));
+                //컴파일된 APK가 없습니다.
             }
         }
 
         private void btnOpenSignedFolder_Click(object sender, RoutedEventArgs e)
         {
+            ResourceManager rm = new ResourceManager("ReAPK.Resources", Assembly.GetExecutingAssembly());
             string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "!Signed APKs");
             if (Directory.Exists(folderPath))
             {
@@ -771,7 +811,8 @@ namespace ReAPK
             }
             else
             {
-                MessageBox.Show("서명된 APK가 없습니다.");
+                MessageBox.Show(rm.GetString("NoSigned", CultureInfo.CurrentCulture));
+                //서명된 APK가 없습니다.
             }
         }
     }

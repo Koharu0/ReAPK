@@ -120,6 +120,10 @@
   <data name="apksignerNotFound" xml:space="preserve">
     <value>Error: apksigner.jar does not exist.Please change the path in the settings.</value>
   </data>
+  <data name="apksignerNotFound_Retry" xml:space="preserve">
+    <value>The apktool.jar path is incorrect.
+      Please correct it in the settings and try again.</value>
+  </data>
   <data name="ApktoolNotFound" xml:space="preserve">
     <value>Error: apktool.jar does not exist.
       Please change the path in the settings.</value>
@@ -146,12 +150,21 @@
   <data name="btnSign" xml:space="preserve">
     <value>Sign APK</value>
   </data>
+  <data name="CanOnlyFolder" xml:space="preserve">
+    <value>You can only drag and drop folders.</value>
+  </data>
   <data name="CertNotFound" xml:space="preserve">
     <value>Error: Cert does not exist.
       Please change the path in the settings.</value>
   </data>
   <data name="chkAutoSign" xml:space="preserve">
     <value>Automatically Sign APK After Compile</value>
+  </data>
+  <data name="CompileComplete" xml:space="preserve">
+    <value>Compilation of {0} is complete.</value>
+  </data>
+  <data name="Compiling" xml:space="preserve">
+    <value>Compiling {0}...</value>
   </data>
   <data name="DecompileCanceled" xml:space="preserve">
     <value>Decompiling of {0}.apk has been cancelled.</value>
@@ -182,6 +195,15 @@
   <data name="labWarning" xml:space="preserve">
     <value>Please press 'Set' after making changes to save your settings.</value>
   </data>
+  <data name="NoCompiled" xml:space="preserve">
+    <value>There is no compiled APK.</value>
+  </data>
+  <data name="NoDecompiled" xml:space="preserve">
+    <value>There is no decompiled APK.</value>
+  </data>
+  <data name="NoSigned" xml:space="preserve">
+    <value>There is no signed APK.</value>
+  </data>
   <data name="OnlyCanDropAPK" xml:space="preserve">
     <value>You can only drag and drop files with the .apk extension.</value>
   </data>
@@ -197,6 +219,33 @@
       Press Win+R -&gt; enter %localappdata%, then delete the ReAPK folder.
       If the ReAPK folder does not exist, please reinstall the program.</value>
   </data>
+  <data name="Selectapksigner" xml:space="preserve">
+    <value>Please select the apksigner.jar</value>
+  </data>
+  <data name="SelectApktool" xml:space="preserve">
+    <value>Please select the Apktool file. (Only apktool.jar is allowed.)</value>
+  </data>
+  <data name="SelectCert" xml:space="preserve">
+    <value>Select X509 Certificate (.x509.pem) for APK Signing</value>
+  </data>
+  <data name="SelectCompile" xml:space="preserve">
+    <value>Select an APK to compile.</value>
+  </data>
+  <data name="SelectDecompile" xml:space="preserve">
+    <value>Select an APK to decompile.</value>
+  </data>
+  <data name="SelectKey" xml:space="preserve">
+    <value>Select Private Key File (.pk8) for APK Signing</value>
+  </data>
+  <data name="SelectSign" xml:space="preserve">
+    <value>Select an APK to sign.</value>
+  </data>
+  <data name="SignComplete" xml:space="preserve">
+    <value>{0}.apk signing is complete.</value>
+  </data>
+  <data name="Signing" xml:space="preserve">
+    <value>Signing {0}.apk...</value>
+  </data>
   <data name="tabMain" xml:space="preserve">
     <value>Main</value>
   </data>
@@ -206,10 +255,20 @@
   <data name="UnknownError" xml:space="preserve">
     <value>An unknown error has occurred. The program may not function properly.</value>
   </data>
+  <data name="UnknownError_CheckBox" xml:space="preserve">
+    <value>An unknown error has occurred.
+      It looks like it might be resolved if you click the checkbox below this button and then press this button again!</value>
+  </data>
   <data name="UnknownError_RestartNeeded" xml:space="preserve">
     <value>An unknown error has occurred. Please restart the program.</value>
   </data>
+  <data name="WhileCompileError" xml:space="preserve">
+    <value>A problem occurred during compilation:</value>
+  </data>
   <data name="WhileDecompileError" xml:space="preserve">
     <value>A problem occurred during decompilation:</value>
+  </data>
+  <data name="WhileSignError" xml:space="preserve">
+    <value>Error occurred during signing: </value>
   </data>
 </root>

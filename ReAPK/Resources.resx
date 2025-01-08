@@ -121,6 +121,10 @@
     <value>오류</value>
     <comment>apksigner.jar 경로가 잘못됨</comment>
   </data>
+  <data name="apksignerNotFound_Retry" xml:space="preserve">
+    <value>오류</value>
+    <comment>apksigner.jar 경로 잘못된, 수정 후 다시 시도</comment>
+  </data>
   <data name="ApktoolNotFound" xml:space="preserve">
     <value>오류</value>
     <comment>apktool.jar 경로가 잘못됨</comment>
@@ -147,12 +151,24 @@
   <data name="btnSign" xml:space="preserve">
     <value>오류</value>
   </data>
+  <data name="CanOnlyFolder" xml:space="preserve">
+    <value>오류</value>
+    <comment>폴더만 Drop 가능</comment>
+  </data>
   <data name="CertNotFound" xml:space="preserve">
     <value>오류</value>
     <comment>Cert 경로가 잘못됨</comment>
   </data>
   <data name="chkAutoSign" xml:space="preserve">
     <value>오류</value>
+  </data>
+  <data name="CompileComplete" xml:space="preserve">
+    <value>오류</value>
+    <comment>컴파일 완료됨</comment>
+  </data>
+  <data name="Compiling" xml:space="preserve">
+    <value>오류</value>
+    <comment>컴파일 중</comment>
   </data>
   <data name="DecompileCanceled" xml:space="preserve">
     <value>오류</value>
@@ -188,6 +204,18 @@
   <data name="labWarning" xml:space="preserve">
     <value>오류</value>
   </data>
+  <data name="NoCompiled" xml:space="preserve">
+    <value>오류</value>
+    <comment>컴파일된 APK 없음</comment>
+  </data>
+  <data name="NoDecompiled" xml:space="preserve">
+    <value>오류</value>
+    <comment>디컴파일된 APK 없음</comment>
+  </data>
+  <data name="NoSigned" xml:space="preserve">
+    <value>오류</value>
+    <comment>서명된 APK 없음</comment>
+  </data>
   <data name="OnlyCanDropAPK" xml:space="preserve">
     <value>오류</value>
     <comment>.apk만 끌어 놓을 수 있음</comment>
@@ -204,6 +232,42 @@
     <value>오류</value>
     <comment>설정 파일 초기화 실패</comment>
   </data>
+  <data name="Selectapksigner" xml:space="preserve">
+    <value>오류</value>
+    <comment>apksigner.jar 선택</comment>
+  </data>
+  <data name="SelectApktool" xml:space="preserve">
+    <value>오류</value>
+    <comment>Apktool 선택</comment>
+  </data>
+  <data name="SelectCert" xml:space="preserve">
+    <value>오류</value>
+    <comment>Cert 선택</comment>
+  </data>
+  <data name="SelectCompile" xml:space="preserve">
+    <value>오류</value>
+    <comment>컴파일할 APK 선택</comment>
+  </data>
+  <data name="SelectDecompile" xml:space="preserve">
+    <value>오류</value>
+    <comment>디컴파일할 APK 선택</comment>
+  </data>
+  <data name="SelectKey" xml:space="preserve">
+    <value>오류</value>
+    <comment>Key 선택</comment>
+  </data>
+  <data name="SelectSign" xml:space="preserve">
+    <value>오류</value>
+    <comment>서명할 APK 선택</comment>
+  </data>
+  <data name="SignComplete" xml:space="preserve">
+    <value>오류</value>
+    <comment>APK 서명 완료됨</comment>
+  </data>
+  <data name="Signing" xml:space="preserve">
+    <value>오류</value>
+    <comment>APK 서명 중</comment>
+  </data>
   <data name="tabMain" xml:space="preserve">
     <value>오류</value>
   </data>
@@ -214,12 +278,24 @@
     <value>오류</value>
     <comment>알 수 없는 오류 발생</comment>
   </data>
+  <data name="UnknownError_CheckBox" xml:space="preserve">
+    <value>오류</value>
+    <comment>알 수 없는 오류 발생, 체크박스 눌러보기</comment>
+  </data>
   <data name="UnknownError_RestartNeeded" xml:space="preserve">
     <value>오류</value>
     <comment>알 수 없는 오류 발생, 재시작 필요</comment>
   </data>
+  <data name="WhileCompileError" xml:space="preserve">
+    <value>오류</value>
+    <comment>컴파일 중 오류 발생</comment>
+  </data>
   <data name="WhileDecompileError" xml:space="preserve">
     <value>오류</value>
     <comment>디컴파일 중 오류 발생</comment>
+  </data>
+  <data name="WhileSignError" xml:space="preserve">
+    <value>오류</value>
+    <comment>서명 중 오류 발생</comment>
   </data>
 </root>
